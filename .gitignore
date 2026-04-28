@@ -1,0 +1,73 @@
+.claude
+CLAUDE.md
+
+# =========================
+# Sistema / Editor
+# =========================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Environment
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Docker
+# =========================
+docker-data/
+postgres-data/
+
+# =========================
+# FRONTEND (React/Vite)
+# =========================
+front/node_modules/
+front/dist/
+front/.vite/
+front/coverage/
+
+# =========================
+# BACKEND (.NET)
+# =========================
+api/**/bin/
+api/**/obj/
+api/**/*.user
+api/**/*.suo
+api/**/*.cache
+api/**/*.pdb
+
+# Rider / VS
+*.DotSettings.user
+
+# =========================
+# Banco / arquivos locais
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Testes
+# =========================
+coverage/
+TestResults/
+
+# =========================
+# Kubernetes secrets
+# =========================
+k8s/secrets.yml
+k8s/*.secret.yaml
+k8s/*.secret.yml
+
