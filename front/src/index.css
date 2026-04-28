@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-handwritten: 'Caveat', cursive;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-handwritten {
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(120%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(120%); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.animate-fadeIn    { animation: fadeIn    0.3s ease both; }
+.animate-slideDown { animation: slideDown 0.25s ease both; }
+.animate-scaleIn   { animation: scaleIn   0.2s ease both; }
+.toast-in          { animation: toastIn   0.35s ease both; }
+.toast-out         { animation: toastOut  0.3s ease both; }
+
+.note-rotate-1 { rotate: -2.5deg; }
+.note-rotate-2 { rotate:  2deg;   }
+.note-rotate-3 { rotate: -1deg;   }
+.note-rotate-4 { rotate:  3deg;   }
+.note-rotate-5 { rotate: -2deg;   }
+.note-rotate-6 { rotate:  1.5deg; }
