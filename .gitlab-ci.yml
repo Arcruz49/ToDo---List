@@ -29,7 +29,7 @@ test:front:
 deploy:
   stage: deploy
   script:
-    - docker compose up -d --build
+    - docker compose up -d --build --no-cache
     - docker image prune -f
   tags:
     - homeserver
