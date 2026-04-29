@@ -11,7 +11,7 @@ test:api:
   tags:
     - homeserver
   only:
-    - main
+    - master
     - merge_requests
 
 test:front:
@@ -23,7 +23,7 @@ test:front:
   tags:
     - homeserver
   only:
-    - main
+    - master
     - merge_requests
 
 deploy:
@@ -34,4 +34,4 @@ deploy:
   tags:
     - homeserver
   only:
-    - main
+    - master
