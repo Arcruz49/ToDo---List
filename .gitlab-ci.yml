@@ -29,6 +29,7 @@ test:front:
 deploy:
   stage: deploy
   script:
+    - echo "VITE_API_URL=$VITE_API_URL"
     - docker compose down
     - docker compose build --no-cache
     - docker compose up -d
