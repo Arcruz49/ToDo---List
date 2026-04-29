@@ -142,6 +142,7 @@ export default function App() {
         <TaskForm onSubmit={handleCreate} onClose={() => setCreating(false)} />
       )}
       <EditModal
+        key={editingTask?.id ?? 'closed'}
         task={editingTask}
         onClose={() => setEditingTask(null)}
         onSave={handleSave}

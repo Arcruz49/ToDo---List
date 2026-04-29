@@ -6,19 +6,13 @@ export function useTasks(onError: (msg: string) => void) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await api.list();
-      setTasks(data);
-    } catch {
-      onError('Erro ao carregar tarefas.');
-    } finally {
-      setLoading(false);
-    }
+  useEffect(() => {
+    let cancelled = false;
+    api.list()
+      .then(data => { if (!cancelled) { setTasks(data); setLoading(false); } })
+      .catch(() => { if (!cancelled) { onError('Erro ao carregar tarefas.'); setLoading(false); } });
+    return () => { cancelled = true; };
   }, [onError]);
-
-  useEffect(() => { load(); }, [load]);
 
   const create = useCallback(async (payload: CreateTaskPayload) => {
     const task = await api.create(payload);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { XIcon } from './Icons';
 import ColorPicker from './ColorPicker';
 import { DEFAULT_COLOR } from '../colors';
@@ -17,20 +17,11 @@ interface Props {
 }
 
 export default function EditModal({ task, onClose, onSave }: Props) {
-  const [title,  setTitle]  = useState('');
-  const [desc,   setDesc]   = useState('');
-  const [status, setStatus] = useState<TaskStatus>('Pending');
-  const [color,  setColor]  = useState(DEFAULT_COLOR.id);
+  const [title,  setTitle]  = useState(task?.title ?? '');
+  const [desc,   setDesc]   = useState(task?.description ?? '');
+  const [status, setStatus] = useState<TaskStatus>(task?.status ?? 'Pending');
+  const [color,  setColor]  = useState(task?.color || DEFAULT_COLOR.id);
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    if (task) {
-      setTitle(task.title);
-      setDesc(task.description);
-      setStatus(task.status);
-      setColor(task.color || DEFAULT_COLOR.id);
-    }
-  }, [task]);
 
   if (!task) return null;
 
