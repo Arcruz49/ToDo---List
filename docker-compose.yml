@@ -3,12 +3,11 @@ services:
     image: postgres:16
     container_name: todo-db
     environment:
-      POSTGRES_USER: arthur.cruz
-      POSTGRES_PASSWORD: todo123
-      POSTGRES_DB: todo_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
-
   api:
     build:
       context: ./api/TodoAPI
@@ -18,11 +17,12 @@ services:
     depends_on:
       - db
     environment:
-      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=todoList_db;Username=arthur.cruz;Password=todo12345
-
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
   front:
     build:
       context: ./front
+      args:
+        VITE_API_URL: ${VITE_API_URL}
     container_name: todo-front
     ports:
       - "5173:80"
