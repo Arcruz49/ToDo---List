@@ -37,14 +37,6 @@ function Sep() {
   return <span className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-0.5 self-center shrink-0" />;
 }
 
-// TipTap only handles a limited set of elements/attributes.
-// HTML with inline styles, divs, spans, tables, etc. must stay in preview mode.
-function isComplexHtml(html: string): boolean {
-  return /style\s*=|<div[\s>]|<span[\s>]|<table[\s>]|<img[\s>]|<figure[\s>]|<iframe[\s>]/.test(html);
-}
-
-type Mode = 'wysiwyg' | 'source' | 'preview';
-
 interface Props {
   value: string;
   onChange: (html: string) => void;
@@ -52,9 +44,7 @@ interface Props {
 }
 
 export default function RichTextEditor({ value, onChange, placeholder }: Props) {
-  const initialComplex = !!value && isComplexHtml(value);
-
-  const [mode,       setMode]       = useState<Mode>(initialComplex ? 'preview' : 'wysiwyg');
+  const [sourceMode, setSourceMode] = useState(false);
   const [sourceHtml, setSourceHtml] = useState(value);
 
   const editor = useEditor({
@@ -63,8 +53,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: Props) 
       Underline,
       Placeholder.configure({ placeholder: placeholder ?? 'Descrição (opcional)' }),
     ],
-    // Don't feed complex HTML into TipTap on init — it would strip the content
-    content: initialComplex ? '' : (value || ''),
+    content: value || '',
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
       onChange(html === '<p></p>' ? '' : html);
@@ -78,38 +67,23 @@ export default function RichTextEditor({ value, onChange, placeholder }: Props) 
 
   const handleToggleSource = () => {
     if (!editor) return;
-
-    if (mode === 'wysiwyg') {
-      // wysiwyg → source: snapshot current HTML
+    if (!sourceMode) {
       setSourceHtml(editor.getHTML());
-      setMode('source');
-    } else if (mode === 'source') {
-      // source → wysiwyg or preview
-      if (isComplexHtml(sourceHtml)) {
-        // Complex HTML: TipTap would strip it — show a styled preview instead
-        onChange(sourceHtml === '<p></p>' ? '' : sourceHtml);
-        setMode('preview');
-      } else {
-        // Simple HTML: safe to load into TipTap
-        editor.commands.setContent(sourceHtml, { emitUpdate: false });
-        onChange(sourceHtml === '<p></p>' ? '' : sourceHtml);
-        setMode('wysiwyg');
-      }
     } else {
-      // preview → source
-      setMode('source');
+      editor.commands.setContent(sourceHtml, { emitUpdate: false });
+      const html = sourceHtml;
+      onChange(html === '<p></p>' ? '' : html);
     }
+    setSourceMode(s => !s);
   };
 
   if (!editor) return null;
-
-  const sourceActive = mode === 'source';
 
   return (
     <div className="rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-900 focus-within:ring-2 focus-within:ring-violet-500 focus-within:border-transparent transition-all">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 min-h-[2.5rem]">
-        {mode === 'wysiwyg' && (
+        {!sourceMode && (
           <>
             <ToolbarBtn active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} title="Negrito (Ctrl+B)">
               <span className="font-bold">B</span>
@@ -182,29 +156,23 @@ export default function RichTextEditor({ value, onChange, placeholder }: Props) 
           </>
         )}
 
-        {mode === 'preview' && (
-          <span className="text-[10px] text-gray-400 dark:text-gray-500 px-1 select-none">
-            HTML personalizado — edite o código para alterar
-          </span>
-        )}
-
         <button
           type="button"
           onClick={handleToggleSource}
-          title={sourceActive ? 'Modo visual' : 'Editar HTML'}
+          title={sourceMode ? 'Modo visual' : 'Editar HTML'}
           className={`
             ml-auto px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition-colors shrink-0
-            ${sourceActive
+            ${sourceMode
               ? 'bg-violet-100 dark:bg-violet-950/60 text-violet-700 dark:text-violet-300'
               : 'text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-600 dark:hover:text-gray-300'
             }
           `}
         >
-          {sourceActive ? 'Visual' : '</>'}
+          {sourceMode ? 'Visual' : '</>'}
         </button>
       </div>
 
-      {mode === 'source' && (
+      {sourceMode ? (
         <textarea
           value={sourceHtml}
           onChange={e => {
@@ -214,16 +182,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: Props) 
           className="w-full min-h-[140px] px-3 py-2.5 font-mono text-xs text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900 focus:outline-none resize-y"
           spellCheck={false}
         />
-      )}
-
-      {mode === 'preview' && (
-        <div
-          className="prose-view min-h-[140px] px-3 py-2.5 text-sm text-gray-900 dark:text-gray-100"
-          dangerouslySetInnerHTML={{ __html: sourceHtml }}
-        />
-      )}
-
-      {mode === 'wysiwyg' && (
+      ) : (
         <div className="rte-wrap">
           <EditorContent editor={editor} />
         </div>
