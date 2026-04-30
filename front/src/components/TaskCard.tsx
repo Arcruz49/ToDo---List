@@ -5,12 +5,12 @@ import { resolveCardColor } from '../colors';
 const TEXT_DARK = 'text-gray-800';
 
 const PIN_COLORS = [
-  '#ef4444', // red
-  '#a855f7', // purple
-  '#3b82f6', // blue
-  '#22c55e', // green
-  '#f97316', // orange
-  '#ec4899', // pink
+  '#ef4444',
+  '#a855f7',
+  '#3b82f6',
+  '#22c55e',
+  '#f97316',
+  '#ec4899',
 ];
 
 const ROTATIONS = [
@@ -26,17 +26,31 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('pt-BR');
 }
 
+function stripHtml(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .trim();
+}
+
 interface Props {
   task: Task;
   index: number;
+  onView: (task: Task) => void;
   onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
 }
 
-export default function TaskCard({ task, index, onEdit, onDelete }: Props) {
+export default function TaskCard({ task, index, onView, onEdit, onDelete }: Props) {
   const color    = resolveCardColor(task.color, index);
   const rotation = ROTATIONS[index % ROTATIONS.length];
   const pinColor = PIN_COLORS[index % PIN_COLORS.length];
+  const preview  = task.description ? stripHtml(task.description) : '';
 
   return (
     <div
@@ -46,9 +60,9 @@ export default function TaskCard({ task, index, onEdit, onDelete }: Props) {
         transition-all duration-200 animate-fadeIn min-h-[210px]
         ${color} ${rotation}
       `}
-      onClick={() => onEdit(task)}
+      onClick={() => onView(task)}
     >
-      {/* Pin no topo */}
+      {/* Pin */}
       <div
         className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full shadow-md"
         style={{
@@ -57,7 +71,6 @@ export default function TaskCard({ task, index, onEdit, onDelete }: Props) {
         }}
       />
 
-      {/* Título com fonte handwritten */}
       <h3
         className={`font-handwritten text-2xl leading-tight line-clamp-2 ${TEXT_DARK} ${
           task.status === 'Completed' ? 'line-through opacity-50' : ''
@@ -66,14 +79,12 @@ export default function TaskCard({ task, index, onEdit, onDelete }: Props) {
         {task.title}
       </h3>
 
-      {/* Descrição */}
-      {task.description && (
+      {preview && (
         <p className={`font-handwritten text-lg leading-snug line-clamp-3 opacity-80 ${TEXT_DARK}`}>
-          {task.description}
+          {preview}
         </p>
       )}
 
-      {/* Rodapé: data + botões */}
       <div className="mt-auto pt-2 flex items-center justify-between border-t border-black/10">
         <span className={`flex items-center gap-1.5 text-xs ${TEXT_DARK} opacity-70`}>
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">

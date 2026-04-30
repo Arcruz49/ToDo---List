@@ -9,6 +9,7 @@ import SearchBar      from './components/SearchBar';
 import TaskForm       from './components/TaskForm';
 import TaskList       from './components/TaskList';
 import EditModal      from './components/EditModal';
+import TaskViewModal  from './components/TaskViewModal';
 import ToastContainer from './components/ToastContainer';
 import { PlusIcon }   from './components/Icons';
 
@@ -34,6 +35,7 @@ export default function App() {
   const [query,       setQuery]       = useState('');
   const [filter,      setFilter]      = useState<FilterStatus>('all');
   const [creating,    setCreating]    = useState(false);
+  const [viewingTask, setViewingTask] = useState<Task | null>(null);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const filtered = useMemo(() => {
@@ -83,9 +85,13 @@ export default function App() {
     }
   };
 
+  const handleOpenEdit = (task: Task) => {
+    setViewingTask(null);
+    setEditingTask(task);
+  };
+
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-950 overflow-hidden">
-      {/* Sidebar — desktop only */}
       <Sidebar
         filter={filter}
         onFilter={setFilter}
@@ -94,16 +100,11 @@ export default function App() {
         taskCounts={taskCounts}
       />
 
-      {/* Main area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top bar */}
         <header className="shrink-0 flex items-center gap-3 px-5 md:px-8 py-4 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
-          {/* Mobile: app name */}
           <span className="md:hidden font-bold text-gray-900 dark:text-white text-base mr-auto">
             ToDo Notes
           </span>
-
-          {/* Desktop: section title */}
           <h1 className="hidden md:block text-base font-bold text-gray-900 dark:text-white mr-auto">
             {FILTER_LABELS[filter]}
             <span className="ml-2 text-xs font-normal text-gray-400 dark:text-gray-500 tabular-nums">
@@ -122,25 +123,33 @@ export default function App() {
           </button>
         </header>
 
-        {/* Task grid */}
         <main className="flex-1 overflow-y-auto px-5 md:px-8 py-6 pb-24 md:pb-6">
           <TaskList
             tasks={filtered}
             loading={loading}
             query={query}
-            onEdit={setEditingTask}
+            onView={setViewingTask}
+            onEdit={handleOpenEdit}
             onDelete={handleDelete}
           />
         </main>
       </div>
 
-      {/* Bottom nav — mobile only */}
       <BottomNav filter={filter} onFilter={setFilter} onNew={() => setCreating(true)} />
 
-      {/* Modals */}
       {creating && (
         <TaskForm onSubmit={handleCreate} onClose={() => setCreating(false)} />
       )}
+
+      {viewingTask && (
+        <TaskViewModal
+          key={viewingTask.id}
+          task={viewingTask}
+          onClose={() => setViewingTask(null)}
+          onEdit={handleOpenEdit}
+        />
+      )}
+
       <EditModal
         key={editingTask?.id ?? 'closed'}
         task={editingTask}

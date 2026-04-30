@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { XIcon } from './Icons';
 import ColorPicker from './ColorPicker';
+import RichTextEditor from './RichTextEditor';
 import { DEFAULT_COLOR } from '../colors';
 import type { Task, TaskStatus, UpdateTaskPayload } from '../types';
 
@@ -30,7 +31,7 @@ export default function EditModal({ task, onClose, onSave }: Props) {
     if (!title.trim()) return;
     try {
       setSaving(true);
-      await onSave({ id: task.id, title: title.trim(), description: desc.trim(), status, color });
+      await onSave({ id: task.id, title: title.trim(), description: desc, status, color });
       onClose();
     } finally {
       setSaving(false);
@@ -39,12 +40,11 @@ export default function EditModal({ task, onClose, onSave }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-40 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-40 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4"
       onClick={e => { if (e.target === e.currentTarget) onClose(); }}
     >
-      <div className="animate-scaleIn w-full max-w-md bg-white dark:bg-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden">
-        {/* header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800">
+      <div className="animate-scaleIn w-full sm:max-w-2xl bg-white dark:bg-gray-950 rounded-t-2xl sm:rounded-2xl border-0 sm:border border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800 shrink-0">
           <h2 className="text-sm font-bold text-gray-900 dark:text-white">Editar tarefa</h2>
           <button
             onClick={onClose}
@@ -54,8 +54,8 @@ export default function EditModal({ task, onClose, onSave }: Props) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="px-5 py-4 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+          <div className="px-5 py-4 flex flex-col gap-4 overflow-y-auto flex-1">
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Título</label>
               <input
@@ -75,17 +75,10 @@ export default function EditModal({ task, onClose, onSave }: Props) {
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Descrição</label>
-              <textarea
+              <RichTextEditor
                 value={desc}
-                onChange={e => setDesc(e.target.value)}
-                rows={3}
-                maxLength={500}
-                className="
-                  w-full px-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700
-                  bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white text-sm
-                  focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent
-                  resize-none transition-shadow
-                "
+                onChange={setDesc}
+                placeholder="Descrição (opcional)"
               />
             </div>
 
@@ -115,7 +108,7 @@ export default function EditModal({ task, onClose, onSave }: Props) {
             </div>
           </div>
 
-          <div className="px-5 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 flex gap-2 justify-end">
+          <div className="px-5 py-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 flex gap-2 justify-end shrink-0">
             <button
               type="button"
               onClick={onClose}

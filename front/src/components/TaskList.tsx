@@ -5,6 +5,7 @@ interface Props {
   tasks: Task[];
   loading: boolean;
   query: string;
+  onView: (task: Task) => void;
   onEdit: (task: Task) => void;
   onDelete: (id: string) => void;
 }
@@ -20,7 +21,7 @@ function Skeleton() {
   );
 }
 
-export default function TaskList({ tasks, loading, query, onEdit, onDelete }: Props) {
+export default function TaskList({ tasks, loading, query, onView, onEdit, onDelete }: Props) {
   if (loading) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -52,7 +53,7 @@ export default function TaskList({ tasks, loading, query, onEdit, onDelete }: Pr
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {tasks.map((task, i) => (
-        <TaskCard key={task.id} task={task} index={i} onEdit={onEdit} onDelete={onDelete} />
+        <TaskCard key={task.id} task={task} index={i} onView={onView} onEdit={onEdit} onDelete={onDelete} />
       ))}
     </div>
   );
