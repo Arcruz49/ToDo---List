@@ -26,17 +26,6 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('pt-BR');
 }
 
-function stripHtml(html: string): string {
-  return html
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .trim();
-}
 
 interface Props {
   task: Task;
@@ -50,7 +39,6 @@ export default function TaskCard({ task, index, onView, onEdit, onDelete }: Prop
   const color    = resolveCardColor(task.color, index);
   const rotation = ROTATIONS[index % ROTATIONS.length];
   const pinColor = PIN_COLORS[index % PIN_COLORS.length];
-  const preview  = task.description ? stripHtml(task.description) : '';
 
   return (
     <div
@@ -79,10 +67,11 @@ export default function TaskCard({ task, index, onView, onEdit, onDelete }: Prop
         {task.title}
       </h3>
 
-      {preview && (
-        <p className={`font-handwritten text-lg leading-snug line-clamp-3 opacity-80 ${TEXT_DARK}`}>
-          {preview}
-        </p>
+      {task.description && (
+        <div
+          className={`card-desc-preview font-handwritten text-lg leading-snug opacity-80 ${TEXT_DARK}`}
+          dangerouslySetInnerHTML={{ __html: task.description }}
+        />
       )}
 
       <div className="mt-auto pt-2 flex items-center justify-between border-t border-black/10">

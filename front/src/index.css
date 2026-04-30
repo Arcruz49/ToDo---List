@@ -56,6 +56,20 @@ body {
 .note-rotate-5 { rotate: -2deg;   }
 .note-rotate-6 { rotate:  1.5deg; }
 
+/* ── Card description preview ────────────────────────────────── */
+.card-desc-preview {
+  max-height: 5rem;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+}
+.card-desc-preview > * + * { margin-top: 0.3em; }
+.card-desc-preview ul { list-style-type: disc;    padding-left: 1.2rem; }
+.card-desc-preview ol { list-style-type: decimal; padding-left: 1.2rem; }
+.card-desc-preview h1,
+.card-desc-preview h2,
+.card-desc-preview h3 { font-weight: 700; }
+
 /* ── Rich text editor (TipTap) ────────────────────────────────── */
 .rte-wrap .ProseMirror { outline: none; }
 .rte-wrap .ProseMirror > * + * { margin-top: 0.45em; }
