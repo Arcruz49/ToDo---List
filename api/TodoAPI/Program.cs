@@ -30,7 +30,10 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
-        policy.WithOrigins("http://192.168.1.69:5173")
+        policy.WithOrigins(
+            "http://192.168.1.69:5173",
+            "http://100.94.132.33:5173"
+            )
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
