@@ -42,9 +42,7 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> UpdateTask([FromBody] TaskEditRequest request)
     {
         if (string.IsNullOrEmpty(request.Title?.Trim())) return BadRequest("Title is required");
-
         var response = await _updateTask.ExecuteAsync(request);
-
         return Ok(response);
     }
 
