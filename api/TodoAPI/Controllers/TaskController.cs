@@ -50,7 +50,6 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> GetTask(Guid id)
     {
         var response = await _getTask.ExecuteAsync(id);
-
         return Ok(response);
     }
 
@@ -58,7 +57,6 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> GetTasks()
     {
         var response = await _getTasks.ExecuteAsync();
-
         return Ok(response);
     }
 
@@ -66,7 +64,6 @@ public class TaskController : ControllerBase
     public async Task<IActionResult> DeleteTask(Guid id)
     {
         await _deleteTask.ExecuteAsync(id);
-
         return NoContent();
     }
 }
