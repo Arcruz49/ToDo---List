@@ -27,6 +27,7 @@ public class CreateTask : ICreateTask{
             Description = request.Description ?? "",
             CreatedAt = DateTime.UtcNow,
             Color = request.Color ?? "",
+            DueDate = request.DueDate
         };
 
         _taskRepository.CreateTask(task);
@@ -39,7 +40,8 @@ public class CreateTask : ICreateTask{
             task.CreatedAt,
             task.ConcludedAt,
             task.Status,
-            task.Color ?? ""
+            task.Color ?? "",
+            task.DueDate
         );
     }
 }

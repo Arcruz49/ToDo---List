@@ -7,6 +7,7 @@ export interface Task {
   description: string;
   createdAt: string;
   concludedAt: string | null;
+  dueDate: string | null;
   status: TaskStatus;
   color: string;
 }
@@ -15,6 +16,7 @@ export interface CreateTaskPayload {
   title: string;
   description: string;
   color: string;
+  dueDate?: string | null;
 }
 
 export interface UpdateTaskPayload {
@@ -23,4 +25,5 @@ export interface UpdateTaskPayload {
   description: string;
   status: TaskStatus;
   color: string;
+  dueDate?: string | null;
 }

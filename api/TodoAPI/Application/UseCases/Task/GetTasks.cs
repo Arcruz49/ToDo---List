@@ -25,7 +25,8 @@ public class GetTasks : IGetTasks{
             task.CreatedAt,
             task.ConcludedAt,
             task.Status,
-            task.Color ?? ""
+            task.Color ?? "",
+            task.DueDate
         )).ToList();
     }
 }

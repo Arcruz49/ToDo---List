@@ -9,4 +9,6 @@ public class TaskEditRequest
     public string? Description {get; set; } = string.Empty;
     public string? Color {get; set; } = string.Empty;
     public TodoTaskStatus Status {get; set; }
+    public DateTime? DueDate {get; set; }
+
 }

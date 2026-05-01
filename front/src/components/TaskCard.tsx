@@ -1,5 +1,5 @@
-import type { Task } from '../types';
-import { TrashIcon, PencilIcon } from './Icons';
+import type { Task, TaskStatus } from '../types';
+import { TrashIcon, PencilIcon, ClockIcon } from './Icons';
 import { resolveCardColor } from '../colors';
 
 const TEXT_DARK = 'text-gray-800';
@@ -26,6 +26,27 @@ function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('pt-BR');
 }
 
+type DueDateStatus =
+  | { type: 'overdue'; days: number }
+  | { type: 'today' }
+  | { type: 'soon'; days: number }
+  | { type: 'future'; formatted: string };
+
+function getDueDateStatus(dueDate: string | null, status: TaskStatus): DueDateStatus | null {
+  if (!dueDate || status === 'Completed') return null;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(dueDate);
+  due.setHours(0, 0, 0, 0);
+
+  const diffDays = Math.round((due.getTime() - today.getTime()) / 86400000);
+
+  if (diffDays < 0) return { type: 'overdue', days: Math.abs(diffDays) };
+  if (diffDays === 0) return { type: 'today' };
+  if (diffDays <= 3) return { type: 'soon', days: diffDays };
+  return { type: 'future', formatted: formatDate(dueDate) };
+}
 
 interface Props {
   task: Task;
@@ -39,6 +60,8 @@ export default function TaskCard({ task, index, onView, onEdit, onDelete }: Prop
   const color    = resolveCardColor(task.color, index);
   const rotation = ROTATIONS[index % ROTATIONS.length];
   const pinColor = PIN_COLORS[index % PIN_COLORS.length];
+  const dueStatus = getDueDateStatus(task.dueDate, task.status);
+  const isOverdue = dueStatus?.type === 'overdue';
 
   return (
     <div
@@ -47,6 +70,7 @@ export default function TaskCard({ task, index, onView, onEdit, onDelete }: Prop
         shadow-md hover:shadow-xl hover:scale-[1.03]
         transition-all duration-200 animate-fadeIn min-h-[210px]
         ${color} ${rotation}
+        ${isOverdue ? 'ring-2 ring-red-500/40' : ''}
       `}
       onClick={() => onView(task)}
     >
@@ -58,6 +82,17 @@ export default function TaskCard({ task, index, onView, onEdit, onDelete }: Prop
           boxShadow: `0 2px 4px rgba(0,0,0,0.3), inset -1px -1px 2px rgba(0,0,0,0.2), inset 1px 1px 2px rgba(255,255,255,0.4)`,
         }}
       />
+
+      {/* Overdue stamp */}
+      {isOverdue && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-sm flex items-center justify-center">
+          <div className="-rotate-[18deg] border-[3px] border-red-600 rounded px-3 py-0.5 opacity-25">
+            <span className="text-red-600 text-lg font-black tracking-[0.25em] uppercase font-sans select-none">
+              Vencida
+            </span>
+          </div>
+        </div>
+      )}
 
       <h3
         className={`font-handwritten text-2xl leading-tight line-clamp-2 ${TEXT_DARK} ${
@@ -86,6 +121,29 @@ export default function TaskCard({ task, index, onView, onEdit, onDelete }: Prop
         </span>
 
         <div className="flex items-center gap-1">
+          {dueStatus && (
+            <span
+              className={`flex items-center gap-1 text-xs font-semibold px-1.5 py-0.5 rounded ${
+                dueStatus.type === 'overdue'
+                  ? 'text-red-700 bg-red-100/80'
+                  : dueStatus.type === 'today'
+                  ? 'text-orange-700 bg-orange-100/80 animate-pulse'
+                  : dueStatus.type === 'soon'
+                  ? 'text-orange-600 bg-orange-50/80'
+                  : `${TEXT_DARK} opacity-60`
+              }`}
+            >
+              <ClockIcon className="w-3 h-3 shrink-0" />
+              {dueStatus.type === 'overdue'
+                ? `${dueStatus.days}d atrasada`
+                : dueStatus.type === 'today'
+                ? 'Vence hoje!'
+                : dueStatus.type === 'soon'
+                ? `${dueStatus.days}d`
+                : dueStatus.formatted}
+            </span>
+          )}
+
           <button
             onClick={e => { e.stopPropagation(); onEdit(task); }}
             className="w-7 h-7 rounded-md hover:bg-black/10 flex items-center justify-center transition-colors"

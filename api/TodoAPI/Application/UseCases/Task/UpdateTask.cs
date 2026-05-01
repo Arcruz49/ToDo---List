@@ -27,6 +27,7 @@ public class UpdateTask : IUpdateTask{
         task.Description = request.Description ?? "";
         task.Status = request.Status;
         task.Color = request.Color ?? "";
+        task.DueDate = request.DueDate;
 
         if (request.Status == TodoTaskStatus.Completed && task.ConcludedAt is null)
             task.ConcludedAt = DateTime.UtcNow;
@@ -41,7 +42,8 @@ public class UpdateTask : IUpdateTask{
             task.CreatedAt,
             task.ConcludedAt,
             task.Status,
-            task.Color ?? ""
+            task.Color ?? "",
+            task.DueDate
         );
     }
 }

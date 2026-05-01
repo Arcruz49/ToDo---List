@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { XIcon } from './Icons';
+import { XIcon, CalendarIcon } from './Icons';
 import ColorPicker from './ColorPicker';
 import RichTextEditor from './RichTextEditor';
 import { DEFAULT_COLOR } from '../colors';
@@ -11,6 +11,8 @@ const STATUS_OPTIONS: { value: TaskStatus; label: string; dot: string }[] = [
   { value: 'Completed',  label: 'Concluída',    dot: 'bg-emerald-500' },
 ];
 
+const TODAY = new Date().toISOString().split('T')[0];
+
 interface Props {
   onSubmit: (payload: CreateTaskPayload) => Promise<void>;
   onClose: () => void;
@@ -21,6 +23,7 @@ export default function TaskForm({ onSubmit, onClose }: Props) {
   const [description, setDescription] = useState('');
   const [status,      setStatus]      = useState<TaskStatus>('Pending');
   const [color,       setColor]       = useState(DEFAULT_COLOR.id);
+  const [dueDate,     setDueDate]     = useState('');
   const [saving,      setSaving]      = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +31,12 @@ export default function TaskForm({ onSubmit, onClose }: Props) {
     if (!title.trim()) return;
     try {
       setSaving(true);
-      await onSubmit({ title: title.trim(), description, color });
+      await onSubmit({
+        title: title.trim(),
+        description,
+        color,
+        dueDate: dueDate || null,
+      });
       onClose();
     } finally {
       setSaving(false);
@@ -82,6 +90,36 @@ export default function TaskForm({ onSubmit, onClose }: Props) {
             </div>
 
             <ColorPicker value={color} onChange={setColor} />
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                Data de vencimento
+              </label>
+              <div className="relative">
+                <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <input
+                  type="date"
+                  value={dueDate}
+                  min={TODAY}
+                  onChange={e => setDueDate(e.target.value)}
+                  className="
+                    w-full pl-9 pr-3 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700
+                    bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white text-sm
+                    focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent
+                    transition-shadow
+                  "
+                />
+              </div>
+              {dueDate && (
+                <button
+                  type="button"
+                  onClick={() => setDueDate('')}
+                  className="self-start text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  Remover vencimento
+                </button>
+              )}
+            </div>
 
             <div className="flex flex-col gap-1.5">
               <label className="text-xs font-semibold text-gray-500 dark:text-gray-400">Status inicial</label>

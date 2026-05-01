@@ -8,6 +8,7 @@ public class TodoTask
     public string? Description { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? ConcludedAt { get; set; }
+    public DateTime? DueDate { get; set; }
     public TodoTaskStatus Status { get; set; } = TodoTaskStatus.Pending;
     public string? Color { get; set; } = string.Empty;
 }

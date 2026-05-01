@@ -9,5 +9,7 @@ public record TaskResponse(
     DateTime CreatedAt,
     DateTime? ConcludedAt,
     TodoTaskStatus Status,
-    string Color
+    string Color,
+    DateTime? DueDate
+
 );

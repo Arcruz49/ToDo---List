@@ -93,7 +93,7 @@ export default function App() {
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
     try {
-      await update({ id: task.id, title: task.title, description: task.description, status, color: task.color ?? '' });
+      await update({ id: task.id, title: task.title, description: task.description, status, color: task.color ?? '', dueDate: task.dueDate });
     } catch {
       toast('Erro ao mover tarefa.', 'error');
     }
